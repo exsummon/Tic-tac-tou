@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tik Tak Toe</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #020617;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    h1 {
+        margin: 15px 0 5px;
+    }
+
+    #status {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 90vw;
+        max-width: 360px;
+        aspect-ratio: 1;
+        margin: auto;
+        gap: 6px;
+    }
+
+    .cell {
+        background: #0f172a;
+        border: 2px solid #22c55e;
+        font-size: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .cell:hover {
+        background: #1e293b;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #22c55e;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background: #16a34a;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>❌ Tik Tak Toe ⭕</h1>
+<div id="status">Giliran: X</div>
+
+<div class="board" id="board"></div>
+
+<button onclick="resetGame()">Restart</button>
+
+<script>
+/* ========== GAME STATE ========== */
+let board = ["","","","","","","","",""];
+let currentPlayer = "X";
+let gameOver = false;
+
+const statusText = document.getElementById("status");
+const boardEl = document.getElementById("board");
+
+/* ========== BUAT PAPAN ========== */
+for (let i = 0; i < 9; i++){
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.dataset.index = i;
+    cell.addEventListener("click", cellClick);
+    boardEl.appendChild(cell);
+}
+
+/* ========== EVENT KLIK ========== */
+function cellClick(e){
+    const index = e.target.dataset.index;
+
+    if (board[index] !== "" || gameOver) return;
+
+    board[index] = currentPlayer;
+    e.target.textContent = currentPlayer;
+
+    if (checkWin()){
+        statusText.textContent = "Pemain " + currentPlayer + " MENANG 🎉";
+        gameOver = true;
+        return;
+    }
+
+    if (board.every(cell => cell !== "")){
+        statusText.textContent = "Hasil SERI 🤝";
+        gameOver = true;
+        return;
+    }
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    statusText.textContent = "Giliran: " + currentPlayer;
+}
+
+/* ========== CEK MENANG ========== */
+function checkWin(){
+    const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+
+    return winPatterns.some(pattern =>
+        pattern.every(i => board[i] === currentPlayer)
+    );
+}
+
+/* ========== RESET GAME ========== */
+function resetGame(){
+    board = ["","","","","","","","",""];
+    currentPlayer = "X";
+    gameOver = false;
+    statusText.textContent = "Giliran: X";
+
+    document.querySelectorAll(".cell").forEach(cell => {
+        cell.textContent = "";
+    });
+}
+</script>
+
+</body>
+</html>
